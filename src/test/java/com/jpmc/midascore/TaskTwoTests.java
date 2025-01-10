@@ -1,5 +1,7 @@
 package com.jpmc.midascore;
 
+import java.util.Arrays;
+
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,15 +25,17 @@ class TaskTwoTests {
     @Test
     void task_two_verifier() throws InterruptedException {
         String[] transactionLines = fileLoader.loadStrings("/test_data/poiuytrewq.uiop");
-        for (String transactionLine : transactionLines) {
-            kafkaProducer.send(transactionLine);
-        }
+        System.out.println("Loaded transactions: " + Arrays.toString(transactionLines));
         Thread.sleep(2000);
         logger.info("----------------------------------------------------------");
         logger.info("----------------------------------------------------------");
         logger.info("----------------------------------------------------------");
         logger.info("use your debugger to watch for incoming transactions");
         logger.info("kill this test once you find the answer");
+        for (String transactionLine : transactionLines) {
+            System.out.println("Sending transaction: " + transactionLine);
+            kafkaProducer.send(transactionLine);
+        }
         while (true) {
             Thread.sleep(20000);
             logger.info("...");
