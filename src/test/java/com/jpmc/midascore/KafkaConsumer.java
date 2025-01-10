@@ -13,6 +13,9 @@ import com.jpmc.midascore.repository.UserRepository;
 @Component
 public class KafkaConsumer {
     @Autowired 
+    private IncentiveService incentiveService; 
+
+    @Autowired 
     private UserRepository userRepository;
 
     @Autowired 
@@ -27,16 +30,22 @@ public class KafkaConsumer {
 
         // Verify transaction
         if (sender != null && recipient != null && sender.getBalance() >= transaction.getAmount()) {
+            Incentive incentive = incentiveService.fetchIncentive(transaction);
+
             // Adjust Balances
             sender.setBalance(sender.getBalance() - transaction.getAmount());
-            recipient.setBalance(recipient.getBalance() + transaction.getAmount());
+            recipient.setBalance(recipient.getBalance() + transaction.getAmount() + incentive.getAmount());
             userRepository.save(sender);
             userRepository.save(recipient); 
             
-            TransactionRecord transactionRecord = new TransactionRecord(sender, recipient, transaction.getAmount());
+            
+            TransactionRecord transactionRecord = new TransactionRecord(sender, recipient, transaction.getAmount(), incentive.getAmount());
             transactionRepository.save(transactionRecord);
 
-            System.out.println("Transaction Successful: " + sender.getName() + ": " + sender.getBalance() + " " + recipient.getName() + ": " + recipient.getBalance() + " " + transaction.getAmount()); 
+            System.out.println("Transaction Successful: " 
+            + sender.getName() + ": " + sender.getBalance() + " "
+            + recipient.getName() + ": " + recipient.getBalance() + " "
+            + transaction.getAmount() + " Incentive: " + incentive.getAmount()); 
         }
         else {
             System.out.println("Invalid Transaction: " + transaction);

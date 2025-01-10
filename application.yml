@@ -25,27 +25,6 @@ spring:
 general:
   kafka-topic: forage
   kafka-group-id: forageGroup
-  # kafka:
-  #   bootstrap-servers: localhost:9092
-  #   consumer:
-  #     group-id: test-group
-  #     auto-offset-reset: earliest
-  #   producer:
-  #     key-serializer: org.apache.kafka.common.serialization.StringSerializer
-  #     value-serializer: org.apache.kafka.common.serialization.StringSerializer
-  #   properties:
-  #     allow.auto.create.topics: true
 
-  main:
-    allow-bean-definition-overriding: true
-    lazy-initialization: true
-
-logging:
-  level:
-    org:
-      springframework:
-        kafka: debug
-
-test:
-  containers:
-    enabled: true
+server: 
+  port: 33400

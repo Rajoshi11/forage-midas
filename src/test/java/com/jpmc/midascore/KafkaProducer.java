@@ -1,9 +1,10 @@
 package com.jpmc.midascore;
 
-import com.jpmc.midascore.foundation.Transaction;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
+
+import com.jpmc.midascore.foundation.Transaction;
 
 @Component
 public class KafkaProducer {
@@ -17,24 +18,21 @@ public class KafkaProducer {
 
     public void send(String transactionLine) {
         try {
-            // Sanitize input by removing extra spaces and newlines
-            transactionLine = transactionLine.replace("\n", "").trim();
-
-            // Split and parse the input
-            String[] transactionData = transactionLine.split(", ");
-            if (transactionData.length != 3) {
-                throw new IllegalArgumentException("Invalid transaction format: " + transactionLine);
+            // Normalize and split transaction line using a comma delimiter
+            String[] transactionData = transactionLine.trim().split(",");
+            
+            // Validate and parse transaction data
+            if (transactionData.length == 3) {
+                long senderId = Long.parseLong(transactionData[0].trim());
+                long receiverId = Long.parseLong(transactionData[1].trim());
+                float amount = Float.parseFloat(transactionData[2].trim());
+                kafkaTemplate.send(topic, new Transaction(senderId, receiverId, amount));
+            } else {
+                System.err.println("Malformed transaction line (skipping): " + transactionLine);
             }
-
-            // Create and send a transaction
-            long senderId = Long.parseLong(transactionData[0].trim());
-            long recipientId = Long.parseLong(transactionData[1].trim());
-            float amount = Float.parseFloat(transactionData[2].trim());
-            kafkaTemplate.send(topic, new Transaction(senderId, recipientId, amount));
         } catch (NumberFormatException e) {
-            System.err.println("Error parsing transaction line: " + transactionLine + " - " + e.getMessage());
-        } catch (Exception e) {
-            System.err.println("Unexpected error while processing transaction line: " + e.getMessage());
+            System.err.println("Invalid transaction data in line: " + transactionLine);
+            e.printStackTrace();
         }
     }
 }

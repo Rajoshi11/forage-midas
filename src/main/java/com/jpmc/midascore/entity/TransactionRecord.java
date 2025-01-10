@@ -22,15 +22,18 @@ public class TransactionRecord {
     private UserRecord recipient; 
 
     private float amount; 
+
+    private float incentive; 
     
     public TransactionRecord() {
 
     }
     
-    public TransactionRecord(UserRecord sender, UserRecord recipient, float amount) {
+    public TransactionRecord(UserRecord sender, UserRecord recipient, float amount, float incentive) {
         this.sender = sender; 
         this.recipient = recipient; 
         this.amount = amount; 
+        this.incentive = incentive; 
     }
 
     // Accessors
@@ -50,6 +53,10 @@ public class TransactionRecord {
         return amount; 
     }
 
+    public float getIncentive() {
+        return incentive; 
+    }
+
     // Mutators
     public void setId(long id) {
         this.id = id; 
@@ -67,8 +74,14 @@ public class TransactionRecord {
         this.amount = amount; 
     }
 
+    public void setIncentive(float incentive) {
+        this.incentive = incentive; 
+    }
+
     @Override
     public String toString() {
-        return "TransactionRecord: [id: " + id + ", senderId: " + sender + ", recipientId: " + recipient + ", amount: " + amount + "]";  
+        return "TransactionRecord: [id: " + id + ", senderId: " + sender + 
+        ", recipientId: " + recipient + ", amount: " +
+        amount + "]";  
     }
 }

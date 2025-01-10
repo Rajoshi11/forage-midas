@@ -27,9 +27,6 @@ public class TaskFourTests {
     void task_four_verifier() throws InterruptedException {
         userPopulator.populate();
         String[] transactionLines = fileLoader.loadStrings("/test_data/alskdjfh.fhdjsk");
-        for (String transactionLine : transactionLines) {
-            kafkaProducer.send(transactionLine);
-        }
         Thread.sleep(2000);
 
 
@@ -38,6 +35,9 @@ public class TaskFourTests {
         logger.info("----------------------------------------------------------");
         logger.info("use your debugger to find out what wilbur's balance is after all transactions are processed");
         logger.info("kill this test once you find the answer");
+        for (String transactionLine : transactionLines) {
+            kafkaProducer.send(transactionLine);
+        }
         while (true) {
             Thread.sleep(20000);
             logger.info("...");
